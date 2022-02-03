@@ -25,4 +25,5 @@ print(covid["gender"].describe())
 print("\n\nanalisi test_indication")
 print(covid["test_indication"].describe())
 
+print("\n\nVisualizzazione di possibili valori NULL")
 print(covid.isnull().sum())
