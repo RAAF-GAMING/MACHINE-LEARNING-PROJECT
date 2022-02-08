@@ -1,3 +1,4 @@
+#(Data Understanding)Qui andiamo a fare un esplorazione dei dati: valori null, relazioni, e descrizione dei dati.
 # To support both python 2 and python 3
 from __future__ import division, print_function, unicode_literals
 
