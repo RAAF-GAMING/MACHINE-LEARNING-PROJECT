@@ -12,6 +12,7 @@ import matplotlib as mpl
 from sklearn.model_selection import train_test_split
 from imblearn.under_sampling import RandomUnderSampler
 
+
 #load our data
 datapath = os.path.join("dataset", "")
 
@@ -66,3 +67,78 @@ plt.show()
 #infine salviamo i dati in un nuovo file
 #print("\n\nSalvataggio dati in nuovo file CVS")
 #covid_bilanciato.to_csv(datapath + "covid_data_bilanciato.csv",index= False)
+
+#FEATURE SCALING
+#andiamo a normalizzare la distribuzione delle seguenti feature: test_date, test_indication, gender, age_60_and_above
+
+#normalizziamo gender in questo modo: male->1 , female->0
+x_train_res["gender"]= x_train_res["gender"].replace({"male":1})
+x_train_res["gender"]= x_train_res["gender"].replace({"female":0})
+
+#lo applichiamo anche sul test set
+x_test["gender"]= x_test["gender"].replace({"male":1})
+x_test["gender"]= x_test["gender"].replace({"female":0})
+
+#normalizziamo age_60_and_above in questo modo: yes->1 , no->0
+x_train_res["age_60_and_above"]= x_train_res["age_60_and_above"].replace({"Yes":1})
+x_train_res["age_60_and_above"]= x_train_res["age_60_and_above"].replace({"No":0})
+
+x_test["age_60_and_above"]= x_test["age_60_and_above"].replace({"Yes":1})
+x_test["age_60_and_above"]= x_test["age_60_and_above"].replace({"No":0})
+
+#normalizziamo test_indication andando ad unire i seguenti 2 valori in un unico valore: Other, Abroad
+#la normalizzazione verrà fatta nel seguente modo: other,abroad->0 , Contact with confirmed->1
+x_train_res["test_indication"]= x_train_res["test_indication"].replace({"Other":0})
+x_train_res["test_indication"]= x_train_res["test_indication"].replace({"Abroad":0})
+x_train_res["test_indication"]= x_train_res["test_indication"].replace({"Contact with confirmed":1})
+
+x_test["test_indication"]= x_test["test_indication"].replace({"Other":0})
+x_test["test_indication"]= x_test["test_indication"].replace({"Abroad":0})
+x_test["test_indication"]= x_test["test_indication"].replace({"Contact with confirmed":1})
+
+
+#normalizziamo test_date in base alla curva dei contagi
+#consideriamo i mesi in cui la curva dei contagi e' alta con valore 1 ovvero: gennaio-maggio e da ottobre-dicembre
+#consideriamo i mesi in cui la curva dei contagi e' bassa con valore 0 ovvero: giugno-settembre
+print("prima del for sul training")
+x_train_res= x_train_res.reset_index()
+i=0
+for row in x_train_res.itertuples():
+    if row.test_date>="2020-01-01" and row.test_date<="2020-05-31":
+        x_train_res.at[i,"test_date"]= 1
+    elif row.test_date>="2020-10-01" and row.test_date<="2020-12-31":
+        x_train_res.at[i,"test_date"]= 1
+    elif row.test_date>="2021-01-01" and row.test_date<="2021-05-31":
+        x_train_res.at[i,"test_date"]= 1
+    elif row.test_date>="2021-10-01" and row.test_date<="2021-12-31":
+        x_train_res.at[i,"test_date"]= 1
+    elif row.test_date>="2020-06-01" and row.test_date<="2020-09-30":
+        x_train_res.at[i,"test_date"]= 0
+    elif row.test_date>="2021-06-01" and row.test_date<="2021-09-30":
+        x_train_res.at[i,"test_date"]= 0
+    i= i+1
+
+print("prima del secondo for")
+x_test= x_test.reset_index()
+i=0
+for row in x_test.itertuples():
+    if row.test_date>="2020-01-01" and row.test_date<="2020-05-31":
+        x_test.at[i,"test_date"]= 1
+    elif row.test_date>="2020-10-01" and row.test_date<="2020-12-31":
+        x_test.at[i,"test_date"]= 1
+    elif row.test_date>="2021-01-01" and row.test_date<="2021-05-31":
+        x_test.at[i,"test_date"]= 1
+    elif row.test_date>="2021-10-01" and row.test_date<="2021-12-31":
+        x_test.at[i,"test_date"]= 1
+    elif row.test_date>="2020-06-01" and row.test_date<="2020-09-30":
+        x_test.at[i,"test_date"]= 0
+    elif row.test_date>="2021-06-01" and row.test_date<="2021-09-30":
+        x_test.at[i,"test_date"]= 0
+    i= i+1
+
+print("dopo il secondo for")
+
+#print(x_train_res["test_date"])
+#print("\n")
+print(x_test["test_date"])
+print(x_train_res['test_date'].value_counts())
