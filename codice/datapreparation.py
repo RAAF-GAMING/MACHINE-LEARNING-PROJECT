@@ -9,6 +9,8 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from sklearn.model_selection import train_test_split
+from imblearn.under_sampling import RandomUnderSampler
 
 #load our data
 datapath = os.path.join("dataset", "")
@@ -34,34 +36,33 @@ plt.ylabel('Frequency')
 print("Dati prima del Balancing")
 print(covid['corona_result'].value_counts())
 plt.show()
-
-#creo un insieme di istanze formate da sole persone positive
-data_positive= covid[covid["corona_result"]=="Positive"]
-
-count_positive= data_positive["corona_result"].count()
-print("Numero di positivi= ",count_positive)
-
-#creo un insieme di istanze formate da sole persone negative e faccio l'undersampling
-data_negative= covid[covid["corona_result"]=="Negative"].sample(count_positive,random_state=16)
-
 print("\n\n")
-
-
-#creo un dataset bilanciato
-
-covid_bilanciato= data_negative.append(data_positive)
-print("Ora il dataset e'")
-print(covid_bilanciato.describe())
+#splitto i dati in dati di train(x indipendenti, y dipendente) e i dati di test(x indipendenti, y dipendente)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
+#restituisce il numero di righe
+print("Number transactions X_train dataset: ", x_train.shape) 
+print("Number transactions y_train dataset: ", y_train.shape)
+print("Number transactions X_test dataset: ", x_test.shape)
+print("Number transactions y_test dataset: ", y_test.shape)
 print("\n\n")
-print("Dati dopo il Balancing")
-print(covid_bilanciato["corona_result"].value_counts())
+print("Prima UnderSampling, counts of label 'Positive': {}".format(sum(y_train == "Positive")))
+print("Prima UnderSampling, counts of label 'Negative': {} ".format(sum(y_train == "Negative")))
+print("\n\n")
+#prepariamo l'undersampler sulla classe di magioranza e che generera le stesse istanze
+un = RandomUnderSampler(sampling_strategy="majority",random_state=42)
+#otteniamo il dataset bilanciato (solo training)
+x_train_res, y_train_res = un.fit_resample(x_train, y_train)
+
+print("Dopo UnderSampling, counts of label 'Positive': {}".format(sum(y_train_res == "Positive")))
+print("Dopo UnderSampling, counts of label 'Negative': {}".format(sum(y_train_res == "Negative")))
+print("\n\n")
 
 #rimostriamo il grafico a barre dopo il bilanciamento
-pd.value_counts(covid_bilanciato['corona_result']).plot.bar()
+pd.value_counts(y_train_res).plot.bar()
 plt.xlabel('corona_result')
 plt.ylabel('Frequency')
 plt.show()
 
 #infine salviamo i dati in un nuovo file
-print("\n\nSalvataggio dati in nuovo file CVS")
-covid_bilanciato.to_csv(datapath + "covid_data_bilanciato.csv",index= False)
+#print("\n\nSalvataggio dati in nuovo file CVS")
+#covid_bilanciato.to_csv(datapath + "covid_data_bilanciato.csv",index= False)
