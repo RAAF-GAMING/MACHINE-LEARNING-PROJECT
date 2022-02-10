@@ -46,16 +46,16 @@ print("Number transactions y_train dataset: ", y_train.shape)
 print("Number transactions X_test dataset: ", x_test.shape)
 print("Number transactions y_test dataset: ", y_test.shape)
 print("\n\n")
-print("Prima UnderSampling, counts of label 'Positive': {}".format(sum(y_train == "Positive")))
-print("Prima UnderSampling, counts of label 'Negative': {} ".format(sum(y_train == "Negative")))
+print("Prima dell'UnderSampling, counts of label 'Positive': {}".format(sum(y_train == "Positive")))
+print("Prima dell'UnderSampling, counts of label 'Negative': {} ".format(sum(y_train == "Negative")))
 print("\n\n")
 #prepariamo l'undersampler sulla classe di magioranza e che generera le stesse istanze
 un = RandomUnderSampler(sampling_strategy="majority",random_state=42)
 #otteniamo il dataset bilanciato (solo training)
 x_train_res, y_train_res = un.fit_resample(x_train, y_train)
 
-print("Dopo UnderSampling, counts of label 'Positive': {}".format(sum(y_train_res == "Positive")))
-print("Dopo UnderSampling, counts of label 'Negative': {}".format(sum(y_train_res == "Negative")))
+print("Dopo l'UnderSampling, counts of label 'Positive': {}".format(sum(y_train_res == "Positive")))
+print("Dopo l'UnderSampling, counts of label 'Negative': {}".format(sum(y_train_res == "Negative")))
 print("\n\n")
 
 #rimostriamo il grafico a barre dopo il bilanciamento
@@ -70,8 +70,9 @@ plt.show()
 
 #FEATURE SCALING
 #andiamo a normalizzare la distribuzione delle seguenti feature: test_date, test_indication, gender, age_60_and_above
-
+print("Inizio Feature Scaling")
 #normalizziamo gender in questo modo: male->1 , female->0
+print("Normalizzo gender...")
 x_train_res["gender"]= x_train_res["gender"].replace({"male":1})
 x_train_res["gender"]= x_train_res["gender"].replace({"female":0})
 
@@ -80,6 +81,7 @@ x_test["gender"]= x_test["gender"].replace({"male":1})
 x_test["gender"]= x_test["gender"].replace({"female":0})
 
 #normalizziamo age_60_and_above in questo modo: yes->1 , no->0
+print("Normalizzo age_60_above...")
 x_train_res["age_60_and_above"]= x_train_res["age_60_and_above"].replace({"Yes":1})
 x_train_res["age_60_and_above"]= x_train_res["age_60_and_above"].replace({"No":0})
 
@@ -88,6 +90,7 @@ x_test["age_60_and_above"]= x_test["age_60_and_above"].replace({"No":0})
 
 #normalizziamo test_indication andando ad unire i seguenti 2 valori in un unico valore: Other, Abroad
 #la normalizzazione verrà fatta nel seguente modo: other,abroad->0 , Contact with confirmed->1
+print("Normalizzo test_indication...")
 x_train_res["test_indication"]= x_train_res["test_indication"].replace({"Other":0})
 x_train_res["test_indication"]= x_train_res["test_indication"].replace({"Abroad":0})
 x_train_res["test_indication"]= x_train_res["test_indication"].replace({"Contact with confirmed":1})
@@ -100,9 +103,11 @@ x_test["test_indication"]= x_test["test_indication"].replace({"Contact with conf
 #normalizziamo test_date in base alla curva dei contagi
 #consideriamo i mesi in cui la curva dei contagi e' alta con valore 1 ovvero: gennaio-maggio e da ottobre-dicembre
 #consideriamo i mesi in cui la curva dei contagi e' bassa con valore 0 ovvero: giugno-settembre
-print("prima del for sul training")
+print("Normalizzo test_date...")
 x_train_res= x_train_res.reset_index()
+y_train_res= y_train_res.reset_index()
 i=0
+#normalizziamo le date del training set
 for row in x_train_res.itertuples():
     if row.test_date>="2020-01-01" and row.test_date<="2020-05-31":
         x_train_res.at[i,"test_date"]= 1
@@ -118,9 +123,10 @@ for row in x_train_res.itertuples():
         x_train_res.at[i,"test_date"]= 0
     i= i+1
 
-print("prima del secondo for")
 x_test= x_test.reset_index()
+y_test= y_test.reset_index()
 i=0
+#normalizziamo le date del test set
 for row in x_test.itertuples():
     if row.test_date>="2020-01-01" and row.test_date<="2020-05-31":
         x_test.at[i,"test_date"]= 1
@@ -136,9 +142,10 @@ for row in x_test.itertuples():
         x_test.at[i,"test_date"]= 0
     i= i+1
 
-print("dopo il secondo for")
+#riportiamo i dataset agli indici originali altrimenti avremo il campo index
+x_train_res= x_train_res.set_index("index")
+y_train_res= y_train_res.set_index("index")
+x_test= x_test.set_index("index")
+y_test= y_test.set_index("index")
 
-#print(x_train_res["test_date"])
-#print("\n")
-print(x_test["test_date"])
-print(x_train_res['test_date'].value_counts())
+print("Fine Feature Scaling!")
