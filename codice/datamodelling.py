@@ -26,7 +26,7 @@ y_train=training.iloc[ : , 9]
 x_test=test.iloc[ : , 0:9]
 y_test=test.iloc[ : , 9]
 #Settiamo l'algoritmo di decision tree
-tree_model = DecisionTreeClassifier(max_depth=20, random_state=42)
+tree_model = DecisionTreeClassifier(random_state=42)
 #Alleniamo il nostro modello
 print("Machine is learning...")
 tree_model.fit(x_train, y_train)
