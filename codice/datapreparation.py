@@ -9,6 +9,9 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2, f_regression
+from numpy import set_printoptions
 from sklearn.model_selection import train_test_split
 from imblearn.under_sampling import RandomUnderSampler
 
@@ -149,3 +152,22 @@ x_test= x_test.set_index("index")
 y_test= y_test.set_index("index")
 
 print("Fine Feature Scaling!")
+
+#salviamo i dati di training e test set
+training=pd.concat([x_train_res, y_train_res.reindex(x_train_res.index)], axis=1)
+test=pd.concat([x_test, y_test.reindex(x_test.index)], axis=1)
+training.to_csv(datapath + "covid_data_training.csv",index= False)
+test.to_csv(datapath + "covid_data_test.csv",index= False)
+
+#inizio feature selection
+fs = SelectKBest(score_func=chi2,k=8)
+fs.fit_transform(x_train_res, y_train_res)
+#otteniamo il dataset solo delle feature selezionate
+x_new_train_res = fs.transform(x_train_res)
+#eliminiamo anche queste feature dal test set.NB la feature selection è stata applicata solo sul training set
+x_new_test = fs.transform(x_test)
+print(x_new_train_res.shape)#restituisce il numero di righe
+#stampiamo le feature stampate dall'algoritmo
+print("\n\nStampiamo le feature stampate dall'algoritmo:")
+x.columns[fs.get_support(indices=True)]
+print(x.columns[fs.get_support(indices=True)].tolist())
