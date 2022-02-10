@@ -153,6 +153,7 @@ y_test= y_test.set_index("index")
 
 print("Fine Feature Scaling!")
 
+
 #salviamo i dati di training e test set
 training=pd.concat([x_train_res, y_train_res.reindex(x_train_res.index)], axis=1)
 test=pd.concat([x_test, y_test.reindex(x_test.index)], axis=1)
