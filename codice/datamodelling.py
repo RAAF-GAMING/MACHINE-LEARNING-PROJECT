@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import metrics
+from sklearn.naive_bayes import CategoricalNB
 from sklearn.metrics import classification_report, confusion_matrix
 
 #load our data
@@ -21,10 +22,28 @@ test=pd.read_csv(datapath + "covid_data_test.csv")
 #nice output if you want to see your data
 #print(covid.head())
 #split data: dividiamo le variabili indipendenti da quella dipendente
-x_train=training.iloc[ : , 0:8]
-y_train=training.iloc[ : , 8]
-x_test=test.iloc[ : , 0:8]
-y_test=test.iloc[ : , 8]
+x_train=training.iloc[ : , 0:9]
+y_train=training.iloc[ : , 9]
+x_test=test.iloc[ : , 0:9]
+y_test=test.iloc[ : , 9]
+
+#Inizializziamo NaiveBayes
+NB = CategoricalNB()
+#Addestriamo Naive Bayes
+print("Machine is learning...")
+NB.fit(x_train, y_train)
+#Facciamo fare le predizioni sul testset
+print("Machine is predicting...")
+predictions = NB.predict(x_test)
+#Stampiamo la matrice di confusione
+print("Matrice di confusione:")
+print(confusion_matrix(y_test, predictions))
+#Overall, how often is the classifier correct?
+print(classification_report(y_test, predictions))
+#Overall, how often is the classifier correct?
+print("Accuracy:",metrics.accuracy_score(y_test, predictions))
+
+
 #Settiamo l'algoritmo di decision tree
 tree_model = DecisionTreeClassifier(random_state=42)
 #Alleniamo il nostro modello

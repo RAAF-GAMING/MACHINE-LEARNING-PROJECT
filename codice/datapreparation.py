@@ -152,10 +152,11 @@ x_test= x_test.set_index("index")
 y_test= y_test.set_index("index")
 
 print("Fine Feature Scaling!")
-
-
-#salviamo i dati di training e test set
-
+#salviamo i dati di training e di test
+training=pd.concat([x_train_res, y_train_res.reindex(x_train_res.index)], axis=1)
+test=pd.concat([x_test, y_test.reindex(x_test.index)], axis=1)
+training.to_csv(datapath + "covid_data_training.csv",index= False)
+test.to_csv(datapath + "covid_data_test.csv",index= False)
 
 #inizio feature selection
 fs = SelectKBest(score_func=chi2,k=8)
@@ -169,9 +170,7 @@ print(x_train_selection.shape)#restituisce il numero di righe
 print("\n\nStampiamo le feature stampate dall'algoritmo:")
 x.columns[fs.get_support(indices=True)]
 print(x.columns[fs.get_support(indices=True)].tolist())
+#eliminiamo dai dati di traning e di test la colonna da scartare dato il feature selection
 x_train_res=x_train_res.loc[:,x.columns[fs.get_support(indices=True)].tolist()]
 x_test=x_test.loc[:,x.columns[fs.get_support(indices=True)].tolist()]
-training=pd.concat([x_train_res, y_train_res.reindex(x_train_res.index)], axis=1)
-test=pd.concat([x_test, y_test.reindex(x_test.index)], axis=1)
-training.to_csv(datapath + "covid_data_training.csv",index= False)
-test.to_csv(datapath + "covid_data_test.csv",index= False)
+
