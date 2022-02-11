@@ -21,10 +21,10 @@ test=pd.read_csv(datapath + "covid_data_test.csv")
 #nice output if you want to see your data
 #print(covid.head())
 #split data: dividiamo le variabili indipendenti da quella dipendente
-x_train=training.iloc[ : , 0:9]
-y_train=training.iloc[ : , 9]
-x_test=test.iloc[ : , 0:9]
-y_test=test.iloc[ : , 9]
+x_train=training.iloc[ : , 0:8]
+y_train=training.iloc[ : , 8]
+x_test=test.iloc[ : , 0:8]
+y_test=test.iloc[ : , 8]
 #Settiamo l'algoritmo di decision tree
 tree_model = DecisionTreeClassifier(random_state=42)
 #Alleniamo il nostro modello
