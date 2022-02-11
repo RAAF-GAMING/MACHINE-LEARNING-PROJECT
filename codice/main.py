@@ -1,7 +1,6 @@
 import os
 import pandas as pd
-from sklearn import naive_bayes
-from datamodelling import decisionTree, splitTrainigAndTest
+from datamodelling import decisionTree, splitTrainigAndTest,naiveBayes
 from dataexploration import exploration
 from datapreparation import *
 
@@ -19,18 +18,17 @@ x,y=splitData(covid)
 
 #mostriamo la distrubuzione dei dati per la variabile dipendente
 showDistribution(covid)
-balancing=input("Vuoi fare data balancing? (1->si,0->no)")
-if balancing==1:
+balance=int(input("Vuoi fare data balancing? (1->si,0->no)"))
+
+if balance==1:
     #bilanciamo il dataset
     x_train_res,y_train_res,x_test,y_test=balancing(x,y)
 else:
-    x_train_res, x_test_res, y_train_res, y_test_res = train_test_split(x, y, test_size=0.3, random_state=42)
+    x_train_res, x_test, y_train_res, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
 
 #normalizziamo i dati
-print(x_train_res)
-x_train_res,y_train_res,x_test,y_test=featureScaling(x_train_res, y_train_res,x_test_res, y_test_res)
-
-selection=input("Vuoi fare feature selection? (1->si,0->no)")
+x_train_res,y_train_res,x_test,y_test=featureScaling(x_train_res, y_train_res,x_test, y_test)
+selection=int(input("Vuoi fare feature selection? (1->si,0->no)"))
 if selection==1:
     #effettuiamo la feature selection
     x_train_res,x_test=featureSelection(x_train_res,y_train_res,x_test,y_test,x)
@@ -46,9 +44,9 @@ test.to_csv(datapath + "covid_data_test.csv",index= False)
 x_train,y_train,x_test,y_test=splitTrainigAndTest(training,test,selection)
 
 #scegliamo il modello da utilizzare
-modello=input("Che classificatore vuoi utilizzare (1->Naive Bayes,0->Decision Tree)")
+modello=int(input("Che classificatore vuoi utilizzare (1->Naive Bayes,0->Decision Tree)"))
 if modello==1:
-    naive_bayes(x_train,y_train,x_test,y_test)
+    naiveBayes(x_train,y_train,x_test,y_test)
 else:
     decisionTree(x_train,y_train,x_test,y_test)
 

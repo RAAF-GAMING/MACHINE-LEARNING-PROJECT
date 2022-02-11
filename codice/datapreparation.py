@@ -42,6 +42,8 @@ def showDistribution(covid):
 def balancing(x,y):
     #splitto i dati in dati di train(x indipendenti, y dipendente) e i dati di test(x indipendenti, y dipendente)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
+
+
     #restituisce il numero di righe
     print("Number transactions X_train dataset: ", x_train.shape) 
     print("Number transactions y_train dataset: ", y_train.shape)
@@ -59,6 +61,7 @@ def balancing(x,y):
     print("Dopo l'UnderSampling, counts of label 'Positive': {}".format(sum(y_train_res == "Positive")))
     print("Dopo l'UnderSampling, counts of label 'Negative': {}".format(sum(y_train_res == "Negative")))
     print("\n\n")
+
 
     #rimostriamo il grafico a barre dopo il bilanciamento
     pd.value_counts(y_train_res).plot.bar()
@@ -107,6 +110,7 @@ def featureScaling(x_train_res,y_train_res,x_test,y_test):
     print("Normalizzo test_date...")
     x_train_res= x_train_res.reset_index()
     y_train_res= y_train_res.reset_index()
+
     i=0
     #normalizziamo le date del training set
     for row in x_train_res.itertuples():
@@ -126,6 +130,7 @@ def featureScaling(x_train_res,y_train_res,x_test,y_test):
 
     x_test= x_test.reset_index()
     y_test= y_test.reset_index()
+   
     i=0
     #normalizziamo le date del test set
     for row in x_test.itertuples():
@@ -148,7 +153,7 @@ def featureScaling(x_train_res,y_train_res,x_test,y_test):
     y_train_res= y_train_res.set_index("index")
     x_test= x_test.set_index("index")
     y_test= y_test.set_index("index")
-
+ 
     print("Fine Feature Scaling!")
     return x_train_res,y_train_res,x_test,y_test
 
@@ -164,7 +169,7 @@ def featureSelection(x_train_res,y_train_res,x_test,y_test,x):
     x_test_selection = fs.transform(x_test)
     print(x_train_selection.shape)#restituisce il numero di righe
     #stampiamo le feature stampate dall'algoritmo
-    print("\n\nStampiamo le feature stampate dall'algoritmo:")
+    print("\n\nStampiamo le feature selezionate dall'algoritmo:")
     x.columns[fs.get_support(indices=True)]
     print(x.columns[fs.get_support(indices=True)].tolist())
     #eliminiamo dai dati di traning e di test la colonna da scartare dato il feature selection
