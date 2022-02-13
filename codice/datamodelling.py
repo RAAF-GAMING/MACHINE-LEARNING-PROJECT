@@ -12,7 +12,7 @@ import matplotlib as mpl
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import metrics
 from sklearn.naive_bayes import CategoricalNB
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 
 
 
@@ -40,11 +40,17 @@ def naiveBayes(x_train,y_train,x_test,y_test):
     print("Machine is predicting...")
     predictions = NB.predict(x_test)
     #Stampiamo la matrice di confusione
+    #TP-FP
+    #FN-TN
     print("Matrice di confusione:")
-    print(confusion_matrix(y_test, predictions))
-    #Overall, how often is the classifier correct?
+    cm = confusion_matrix(y_test, predictions,labels=NB.classes_)
+    print(cm)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=NB.classes_)
+    disp.plot()
+    plt.show()
+    #recall, precision...
     print(classification_report(y_test, predictions))
-    #Overall, how often is the classifier correct?
+    #accuracy
     print("Accuracy:",metrics.accuracy_score(y_test, predictions))
 
 def decisionTree(x_train,y_train,x_test,y_test):
@@ -58,8 +64,16 @@ def decisionTree(x_train,y_train,x_test,y_test):
     y_pred = tree_model.predict(x_test)
     labels = np.unique(y_test)
     #Stampiamo la matrice di confusione
+    #TP-FP
+    #FN-TN
     print("\n\n")
-    print(confusion_matrix(y_test, y_pred, labels=labels))
+    print("Matrice di confusione:")
+    cm = confusion_matrix(y_test, y_pred,labels=labels)
+    print(cm)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
+    disp.plot()
+    plt.show()
+    #recall, precision...
     print(classification_report(y_test, y_pred))
-    #Overall, how often is the classifier correct?
+    #accuracy
     print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
