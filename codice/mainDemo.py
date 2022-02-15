@@ -1,6 +1,9 @@
 import os
 import pandas as pd
+from sklearn import tree
 from sklearn.tree import DecisionTreeClassifier
+from sklearn import tree
+import matplotlib.pyplot as plt
 
 datapath = os.path.join("dataset", "")
 training = pd.read_csv(datapath + "covid_data_training.csv")
@@ -13,6 +16,7 @@ y_train=training.iloc[ : , 8]
 tree_model = DecisionTreeClassifier(random_state=42)
 #Alleniamo il nostro modello
 tree_model.fit(x_train, y_train)
+
 scelta=1
 while scelta==1:
     data=input('Ti trovi in un mese tra ottobre-maggio?==1, oppure giugno-settembre?==0\n')
@@ -27,5 +31,8 @@ while scelta==1:
     "test_indication":[contatti_con_positivi]}
     istanza=pd.DataFrame(sintomi)
     y_pred = tree_model.predict(istanza)
-    print("la predizione è: ",y_pred)
+    print("la predizione è: ",y_pred) 
     scelta=int(input('vuoi continuare?, 1=SI 0=NO\n'))
+    
+tree.plot_tree(tree_model)
+plt.show()
